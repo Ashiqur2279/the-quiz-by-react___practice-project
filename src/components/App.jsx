@@ -4,12 +4,16 @@ import Error from "./Error";
 import Header from "./Header";
 import Loader from "./Loader";
 import Main from "./Main";
-import Questions from "./Questions";
+import Question from "./Question";
+import StartScreen from "./StartScreen";
 
 const initialState = {
   questions: [],
   //'loading','error', 'ready', 'active', 'finished'
   status: "loading",
+  index: 0,
+  answer: null,
+  points: 0,
 };
 
 const reducer = (state, action) => {
@@ -26,6 +30,22 @@ const reducer = (state, action) => {
         ...state,
         status: "error",
       };
+    case "start":
+      return {
+        ...state,
+        status: "active",
+      };
+    case "newAnswer":
+      // eslint-disable-next-line no-case-declarations
+      const question = state.questions.at(state.index);
+      return {
+        ...state,
+        answer: action.payload,
+        points:
+          action.payload === question.correctOption
+            ? state.points + question.points
+            : state.points,
+      };
 
     default:
       throw new Error("action is unknown");
@@ -36,7 +56,7 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   //destructure the state
-  const { questions, status } = state;
+  const { questions, status, index, answer } = state;
 
   //option 1: fetch the data using the json server
   // useEffect(() => {
@@ -73,7 +93,16 @@ function App() {
       <Main>
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
-        {status === "ready" && <Questions questions={questions} />}
+        {status === "ready" && (
+          <StartScreen questions={questions} dispatch={dispatch} />
+        )}
+        {status === "active" && (
+          <Question
+            question={questions[index]}
+            dispatch={dispatch}
+            answer={answer}
+          />
+        )}
       </Main>
     </div>
   );
