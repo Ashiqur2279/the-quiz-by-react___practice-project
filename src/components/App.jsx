@@ -1,7 +1,10 @@
 // import "./App.css";
 import { useEffect, useReducer } from "react";
+import Error from "./Error";
 import Header from "./Header";
+import Loader from "./Loader";
 import Main from "./Main";
+import Questions from "./Questions";
 
 const initialState = {
   questions: [],
@@ -33,7 +36,7 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   //destructure the state
-  const { questions } = state;
+  const { questions, status } = state;
 
   //option 1: fetch the data using the json server
   // useEffect(() => {
@@ -68,11 +71,9 @@ function App() {
     <div className="app">
       <Header />
       <Main>
-        {/* {questions.map((question) => (
-          <h2 key={question}>{question}</h2>
-        ))} */}
-        <p>1/15</p>
-        <p>Questions</p>
+        {status === "loading" && <Loader />}
+        {status === "error" && <Error />}
+        {status === "ready" && <Questions questions={questions} />}
       </Main>
     </div>
   );
