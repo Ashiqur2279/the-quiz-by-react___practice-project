@@ -2,17 +2,35 @@
 import React from "react";
 
 // eslint-disable-next-line react/prop-types
-const NextButton = ({ dispatch, answer }) => {
-  if (!answer) {
+const NextButton = ({ dispatch, answer, index, numQuestions }) => {
+  if (answer === null) {
     return;
   }
   return (
-    <button
-      className="btn btn-ui"
-      onClick={() => dispatch({ type: "nextQuestion" })}
-    >
-      Next
-    </button>
+    <>
+      {index + 1 < numQuestions ? (
+        <button
+          className="btn btn-ui"
+          onClick={() => dispatch({ type: "nextQuestion" })}
+        >
+          Next
+        </button>
+      ) : (
+        <button
+          className="btn btn-ui"
+          onClick={() => dispatch({ type: "lastQuestion" })}
+        >
+          Finished
+        </button>
+      )}
+
+      {/* <button
+        className="btn btn-ui"
+        onClick={() => dispatch({ type: "nextQuestion" })}
+      >
+        Next
+      </button> */}
+    </>
   );
 };
 

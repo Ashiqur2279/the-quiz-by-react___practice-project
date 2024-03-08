@@ -1,6 +1,7 @@
 // import "./App.css";
 import { useEffect, useReducer } from "react";
 import Error from "./Error";
+import FinishedScreen from "./FinishedScreen";
 import Header from "./Header";
 import Loader from "./Loader";
 import Main from "./Main";
@@ -16,6 +17,7 @@ const initialState = {
   index: 0,
   answer: null,
   points: 0,
+  highScore: 0,
 };
 
 const reducer = (state, action) => {
@@ -56,6 +58,30 @@ const reducer = (state, action) => {
         answer: null,
       };
 
+    case "lastQuestion":
+      return {
+        ...state,
+        status: "finished",
+        answer: null,
+        highScore:
+          state.points > state.highScore ? state.points : state.highScore,
+      };
+
+    case "reStart":
+      return {
+        ...initialState,
+        status: "ready",
+        questions: state.questions,
+      };
+    // return {
+    //   ...state,
+    //   answer: null,
+    //   status: "ready",
+    //   index: 0,
+    //   points: 0,
+    //   highScore: 0,
+    // };
+
     default:
       throw new Error("action is unknown");
   }
@@ -65,7 +91,7 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   //destructure the state
-  const { questions, status, index, answer, points } = state;
+  const { questions, status, index, answer, points, highScore } = state;
 
   const numQuestions = questions.length;
   const maxPossiblePoints = questions.reduce(
@@ -125,8 +151,21 @@ function App() {
               dispatch={dispatch}
               answer={answer}
             />
-            <NextButton dispatch={dispatch} answer={answer} />
+            <NextButton
+              dispatch={dispatch}
+              answer={answer}
+              index={index}
+              numQuestions={numQuestions}
+            />
           </>
+        )}
+        {status === "finished" && (
+          <FinishedScreen
+            maxPossiblePoints={maxPossiblePoints}
+            points={points}
+            highScore={highScore}
+            dispatch={dispatch}
+          />
         )}
       </Main>
     </div>
