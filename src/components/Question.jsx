@@ -4,7 +4,6 @@ import Option from "./Option";
 
 // eslint-disable-next-line react/prop-types
 const Question = ({ question, dispatch, answer }) => {
-  console.log(question);
   return (
     <>
       <div>

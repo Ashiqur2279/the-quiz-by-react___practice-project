@@ -4,6 +4,8 @@ import Error from "./Error";
 import Header from "./Header";
 import Loader from "./Loader";
 import Main from "./Main";
+import NextButton from "./NextButton";
+import Progress from "./Progress";
 import Question from "./Question";
 import StartScreen from "./StartScreen";
 
@@ -47,6 +49,13 @@ const reducer = (state, action) => {
             : state.points,
       };
 
+    case "nextQuestion":
+      return {
+        ...state,
+        index: state.index + 1,
+        answer: null,
+      };
+
     default:
       throw new Error("action is unknown");
   }
@@ -56,7 +65,13 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   //destructure the state
-  const { questions, status, index, answer } = state;
+  const { questions, status, index, answer, points } = state;
+
+  const numQuestions = questions.length;
+  const maxPossiblePoints = questions.reduce(
+    (prePoints, curPoints) => prePoints + curPoints.points,
+    0
+  );
 
   //option 1: fetch the data using the json server
   // useEffect(() => {
@@ -94,14 +109,24 @@ function App() {
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
         {status === "ready" && (
-          <StartScreen questions={questions} dispatch={dispatch} />
+          <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
         )}
         {status === "active" && (
-          <Question
-            question={questions[index]}
-            dispatch={dispatch}
-            answer={answer}
-          />
+          <>
+            <Progress
+              index={index}
+              numQuestions={numQuestions}
+              points={points}
+              maxPossiblePoints={maxPossiblePoints}
+              answer={answer}
+            />
+            <Question
+              question={questions[index]}
+              dispatch={dispatch}
+              answer={answer}
+            />
+            <NextButton dispatch={dispatch} answer={answer} />
+          </>
         )}
       </Main>
     </div>

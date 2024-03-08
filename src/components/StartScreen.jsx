@@ -2,11 +2,11 @@
 import React from "react";
 
 /* eslint-disable react/prop-types */
-const StartScreen = ({ questions, dispatch }) => {
+const StartScreen = ({ numQuestions, dispatch }) => {
   return (
     <div className="start">
       <h2>Welcome to The React Quiz!</h2>
-      <h4>{questions.length} questions to test your React Mastery</h4>
+      <h4>{numQuestions} questions to test your React Mastery</h4>
       <button
         className="btn btn-ui"
         onClick={() => dispatch({ type: "start" })}
